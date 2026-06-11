@@ -1,4 +1,6 @@
-const API_KEY = 'AIzaSyAy5qtdjhREiKj0qTXT811NEABShqRWtH8';
+import { GOOGLE_PLACES_API_KEY } from '@env';
+
+const API_KEY = GOOGLE_PLACES_API_KEY;
 
 export interface Place {
   id: string;
