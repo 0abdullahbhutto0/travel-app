@@ -1,4 +1,4 @@
-markdown_content = """<div align="center">
+<div align="center">
   <h1>🌍 Aether</h1>
   <p><b>A modern Travel Discovery and Journey Planning Application</b></p>
   
