@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Place } from '../services/googlePlaces';
 
 interface PlaceCardProps {
@@ -19,7 +20,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place, onPress, onSave, is
         />
         {onSave && (
           <TouchableOpacity style={styles.heartBtn} onPress={onSave}>
-            <Text style={styles.heartIcon}>{isSaved ? '❤️' : '🤍'}</Text>
+            <Ionicons name={isSaved ? "heart" : "heart-outline"} size={24} color={isSaved ? "#E74C3C" : "#fff"} />
           </TouchableOpacity>
         )}
       </View>

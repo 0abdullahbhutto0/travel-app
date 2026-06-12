@@ -12,8 +12,8 @@ export interface Place {
   types?: string[];
 }
 
-const buildPhotoUrl = (photoName: string, maxWidth = 400) => {
-  return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=${maxWidth}&maxWidthPx=${maxWidth}&key=${API_KEY}`;
+export const buildPhotoUrl = (photoName: string, maxWidth = 400, maxHeight = 400) => {
+  return `https://places.googleapis.com/v1/${photoName}/media?maxHeightPx=${maxHeight}&maxWidthPx=${maxWidth}&key=${API_KEY}`;
 };
 
 export const googlePlacesApi = {

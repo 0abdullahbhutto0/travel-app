@@ -8,12 +8,48 @@ import { PlaceCard } from '../components/PlaceCard';
 
 const FILTERS = ['Pizza', 'Coffee', 'Hotels', 'Museums', 'Parks'];
 
+const INITIAL_QUERIES = [
+  { query: 'pizza in new york', title: 'Pizza in New York' },
+  { query: 'coffee in paris', title: 'Coffee in Paris' },
+  { query: 'sushi in tokyo', title: 'Sushi in Tokyo' },
+  { query: 'museums in london', title: 'Museums in London' },
+  { query: 'parks in sydney', title: 'Parks in Sydney' },
+];
+
+const HERO_DATA = [
+  {
+    quote: "Find clarity among the clouds in a landscape untouched by time.",
+    image: "https://picsum.photos/seed/mountains/800/400",
+    query: "hidden gem retreat",
+    title: "Hidden Gems"
+  },
+  {
+    quote: "Discover serenity where the ocean meets the endless sky.",
+    image: "https://picsum.photos/seed/ocean/800/400",
+    query: "secluded beach",
+    title: "Secluded Beaches"
+  },
+  {
+    quote: "Lose yourself in the vibrant heart of the neon city.",
+    image: "https://picsum.photos/seed/tokyo/800/400",
+    query: "tokyo night life",
+    title: "Neon Cities"
+  },
+  {
+    quote: "Embrace the wild whispers of ancient forests.",
+    image: "https://picsum.photos/seed/forest/800/400",
+    query: "forest cabin",
+    title: "Forest Escapes"
+  }
+];
+
 const HomeScreen = ({ navigation }: any) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [feedTitle, setFeedTitle] = useState('Daily Inspiration');
   const [places, setPlaces] = useState<Place[]>([]);
   const [savedPlaceIds, setSavedPlaceIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [heroContent, setHeroContent] = useState(() => HERO_DATA[Math.floor(Math.random() * HERO_DATA.length)]);
 
   const user = auth().currentUser;
 
@@ -28,8 +64,11 @@ const HomeScreen = ({ navigation }: any) => {
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
+      const randomStart = INITIAL_QUERIES[Math.floor(Math.random() * INITIAL_QUERIES.length)];
+      setFeedTitle(randomStart.title);
+      
       const [initialPlaces, saved] = await Promise.all([
-        googlePlacesApi.getPlacesByCategory('pizza in new york'),
+        googlePlacesApi.getPlacesByCategory(randomStart.query),
         user ? firestoreService.getSavedPlaces(user.uid) : Promise.resolve([])
       ]);
       setPlaces(initialPlaces);
@@ -107,13 +146,22 @@ const HomeScreen = ({ navigation }: any) => {
       </ScrollView>
 
       <ImageBackground 
-        source={{ uri: 'https://picsum.photos/seed/travel/800/400' }} 
+        source={{ uri: heroContent.image }} 
         style={styles.heroCard}
         imageStyle={{ borderRadius: 16 }}
       >
         <View style={styles.heroOverlay}>
-          <Text style={styles.heroText}>Find clarity among the clouds in a landscape untouched by time.</Text>
-          <TouchableOpacity style={styles.heroButton} onPress={() => loadFeed('hidden gem retreat', 'Hidden Gems')}>
+          <Text style={styles.heroText}>{heroContent.quote}</Text>
+          <TouchableOpacity 
+            style={styles.heroButton} 
+            onPress={() => {
+              loadFeed(heroContent.query, heroContent.title);
+              // Pick a new random hero card different from the current one
+              const otherHeroes = HERO_DATA.filter(h => h.query !== heroContent.query);
+              const nextHero = otherHeroes[Math.floor(Math.random() * otherHeroes.length)];
+              setHeroContent(nextHero);
+            }}
+          >
             <Text style={styles.heroButtonText}>Begin Journey</Text>
           </TouchableOpacity>
         </View>
@@ -133,7 +181,7 @@ const HomeScreen = ({ navigation }: any) => {
     <FlatList
       style={styles.container}
       showsVerticalScrollIndicator={false}
-      ListHeaderComponent={renderHeader}
+      ListHeaderComponent={renderHeader()}
       data={loading ? [] : places}
       keyExtractor={item => item.id}
       renderItem={({ item }) => (

@@ -1,3 +1,4 @@
+// Cache invalidated 1
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [

@@ -38,7 +38,17 @@ const LoginScreen = () => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
     } catch (error: any) {
-      Alert.alert('Login Error', error.message || 'Something went wrong');
+      if (error.code === 'auth/wrong-password') {
+        setPasswordError('Incorrect password. Please try again.');
+      } else if (error.code === 'auth/user-not-found') {
+        setEmailError('No account found with this email.');
+      } else if (error.code === 'auth/invalid-credential') {
+        setPasswordError('Invalid email or password.');
+      } else if (error.code === 'auth/too-many-requests') {
+        setPasswordError('Too many failed attempts. Try again later.');
+      } else {
+        Alert.alert('Login Error', 'Something went wrong. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

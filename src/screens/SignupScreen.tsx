@@ -8,13 +8,16 @@ const SignupScreen = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const navigation = useNavigation<any>();
 
   const validateInputs = () => {
@@ -23,6 +26,7 @@ const SignupScreen = () => {
     setLastNameError('');
     setEmailError('');
     setPasswordError('');
+    setConfirmPasswordError('');
 
     if (firstName.trim().length < 2) {
       setFirstNameError('First name is required');
@@ -41,6 +45,9 @@ const SignupScreen = () => {
 
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters');
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match');
       isValid = false;
     }
 
@@ -143,6 +150,33 @@ const SignupScreen = () => {
             </TouchableOpacity>
           </View>
           {!!passwordError && <Text style={styles.errorText}>{passwordError}</Text>}
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>Confirm Password</Text>
+          <View style={[styles.passwordInputWrapper, confirmPasswordError ? styles.inputError : null]}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="••••••••"
+              placeholderTextColor="#999"
+              value={confirmPassword}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+                if (confirmPasswordError) setConfirmPasswordError('');
+                if (passwordError) setPasswordError('');
+              }}
+              secureTextEntry={!isConfirmPasswordVisible}
+            />
+            <TouchableOpacity 
+              style={styles.visibilityToggle}
+              onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+            >
+              <Text style={styles.visibilityToggleText}>
+                {isConfirmPasswordVisible ? 'Hide' : 'Show'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {!!confirmPasswordError && <Text style={styles.errorText}>{confirmPasswordError}</Text>}
         </View>
 
         <TouchableOpacity
